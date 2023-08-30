@@ -43,7 +43,7 @@ namespace BanglaTTSIntegration
 
         public static float[] csArray;
 
-        public static List<string> SliceString(string input, int maxLength = 800)
+        public static List<string> SliceString(string input, int maxLength = 450)
         {
             var slices = new List<string>();
 
@@ -69,8 +69,10 @@ namespace BanglaTTSIntegration
                 dynamic pyModule = Py.Import("FullModelRunner");
 
                 List<string> slices = SliceString(BanglaText);
+                int StringSliceCount = 0;
                 foreach (string slice in slices)
                 {
+                    StringSliceCount++;
                     var banglaInput = new PyString(slice);
                     // var banglaInput = new PyString(BanglaText);
                     dynamic result =
@@ -88,6 +90,7 @@ namespace BanglaTTSIntegration
 
                     audioDataList.Add(csArray);
                 }
+                Console.WriteLine($"Total String Slices: {StringSliceCount}");
             }
 
             PythonEngine.Shutdown();
