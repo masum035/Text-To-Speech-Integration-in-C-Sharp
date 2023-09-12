@@ -5,10 +5,14 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Accessibility;
 using BanglaTTSIntegration;
+using ManagedWinapi.Accessibility;
+using ManagedWinapi.Windows;
 using NAudio.Wave;
 
 namespace TTSIntegration
@@ -87,6 +91,98 @@ namespace TTSIntegration
             // {
             //     writer.WriteSamples(samples:xyz, offset:0, count:xyz.Length);
             // }
+        }
+
+        // private static void ProcessAccessibilityTree(SystemAccessibleObject sao, int indentationLevel)
+        // {
+        //     try
+        //     {
+        //         // Create indentation string based on the level of indentation
+        //         string indentation = new string(' ', indentationLevel * 4);
+        //
+        //         // Output the name and role of the current accessible object
+        //         Console.WriteLine($"{indentation}Name: {sao.Name}\n, Role: {sao.Role},Description: {sao.Description}\n, Value: {sao.Value}");
+        //
+        //         // Traverse the children
+        //         foreach (SystemAccessibleObject child in sao.Children)
+        //         {
+        //             ProcessAccessibilityTree(child, indentationLevel + 1);
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         // Log error (you can replace this with more sophisticated error handling)
+        //         Console.WriteLine($"Error processing an accessible object: {e.Message}");
+        //     }
+        // }
+        
+        // Import AccessibleObjectFromWindow function from oleacc.dll
+        [DllImport("oleacc.dll")]
+        public static extern int AccessibleObjectFromWindow(IntPtr hwnd, uint id, ref Guid iid, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object ppvObject);
+
+        static List<Tuple<SystemAccessibleObject, int>> saoList = new List<Tuple<SystemAccessibleObject, int>>();
+        public static void ProcessAccessibilityTree(SystemAccessibleObject sao, int level)
+        {
+            try
+            {
+                if ((int)sao.Role == 30)
+                {
+                    saoList.Add(new Tuple<SystemAccessibleObject, int>(sao, level));
+                    Console.WriteLine($"Name: {sao.Name}, Description: {sao.Description}, Value: {sao.Value}");
+                    foreach (SystemAccessibleObject child in sao.Children)
+                    {
+                        Console.WriteLine(child.Value);
+                        ProcessAccessibilityTree(child, level + 1);
+                    }
+                }
+                
+            }
+            catch (Exception e)
+            {
+                // Log the error (you can replace this with more sophisticated error handling)
+                Console.WriteLine($"Error processing an accessible object: {e.Message}");
+            }
+        }
+        public static SystemAccessibleObject GetAccessibleObjectFromWindowHandle(IntPtr hwnd)
+        {
+            object acc = null;
+            Guid IID_IAccessible = new Guid("618736E0-3C3D-11CF-810C-00AA00389B71");
+            const int OBJID_WINDOW = 0x00000000;
+            if (AccessibleObjectFromWindow(hwnd, OBJID_WINDOW, ref IID_IAccessible, ref acc) >= 0)
+            {
+                IAccessible iAccessible = (IAccessible)acc;
+                return new SystemAccessibleObject(iAccessible, OBJID_WINDOW);
+            }
+            return null;
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Enumerate all top-level windows
+            SystemWindow[] topLevelWindows = SystemWindow.AllToplevelWindows;
+
+// Find the Chrome window(s)
+            foreach (var window in topLevelWindows)
+            {
+                try 
+                {
+                    if (window.Process.ProcessName.Equals("chrome") && window.ClassName.Equals("Chrome_WidgetWin_1"))
+                    {
+                        Console.WriteLine("Found Chrome window with title: " + window.Title);
+
+                        // Get the accessible object associated with the window
+                        SystemAccessibleObject sao = GetAccessibleObjectFromWindowHandle(window.HWnd);
+            
+                        // Process the accessibility tree
+                        ProcessAccessibilityTree(sao, 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle the error here
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+            }
+
         }
     }
 }

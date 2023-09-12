@@ -38,6 +38,7 @@
         <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="Accessibility" />
         <Reference Include="Google.Protobuf, Version=3.19.6.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
           <HintPath>packages\Google.Protobuf.3.19.6\lib\net45\Google.Protobuf.dll</HintPath>
         </Reference>
@@ -78,6 +79,9 @@
           <HintPath>packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib" />
+        <Reference Include="mwinapi, Version=0.3.0.5, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>packages\mwinapi.0.3.0.5\lib\net40\mwinapi.dll</HintPath>
+        </Reference>
         <Reference Include="NAudio, Version=2.2.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
           <HintPath>packages\NAudio.2.2.0\lib\net472\NAudio.dll</HintPath>
         </Reference>
@@ -116,6 +120,7 @@
           <HintPath>packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
         </Reference>
         <Reference Include="System.Core" />
+        <Reference Include="System.Management" />
         <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
           <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
         </Reference>
@@ -132,6 +137,7 @@
         <Reference Include="System.Security.Principal.Windows, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
           <HintPath>packages\System.Security.Principal.Windows.4.7.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
         </Reference>
+        <Reference Include="System.Speech" />
         <Reference Include="System.Threading.Channels, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
           <HintPath>packages\System.Threading.Channels.4.7.1\lib\net461\System.Threading.Channels.dll</HintPath>
         </Reference>
@@ -155,11 +161,20 @@
         <Compile Include="Form1.Designer.cs">
             <DependentUpon>Form1.cs</DependentUpon>
         </Compile>
+        <Compile Include="Form2.cs">
+          <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="Form2.Designer.cs">
+          <DependentUpon>Form2.cs</DependentUpon>
+        </Compile>
         <Compile Include="ONNXModelRunner.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <EmbeddedResource Include="Form1.resx">
           <DependentUpon>Form1.cs</DependentUpon>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Form2.resx">
+          <DependentUpon>Form2.cs</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Include="Properties\Resources.resx">
             <Generator>ResXFileCodeGenerator</Generator>
@@ -195,8 +210,10 @@
       <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.Managed.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets'))" />
       <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.props'))" />
       <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets'))" />
+      <Error Condition="!Exists('packages\mwinapi.0.3.0.5\build\mwinapi.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\mwinapi.0.3.0.5\build\mwinapi.targets'))" />
     </Target>
     <Import Project="packages\Microsoft.ML.3.0.0-preview.23266.6\build\netstandard2.0\Microsoft.ML.targets" Condition="Exists('packages\Microsoft.ML.3.0.0-preview.23266.6\build\netstandard2.0\Microsoft.ML.targets')" />
     <Import Project="packages\Microsoft.ML.OnnxRuntime.Managed.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" />
     <Import Project="packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.1.15.1\build\netstandard2.0\Microsoft.ML.OnnxRuntime.targets')" />
+    <Import Project="packages\mwinapi.0.3.0.5\build\mwinapi.targets" Condition="Exists('packages\mwinapi.0.3.0.5\build\mwinapi.targets')" />
 </Project>
