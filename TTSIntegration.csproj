@@ -163,7 +163,6 @@
         </Compile>
         <Compile Include="ModelRunner.cs" />
         <Compile Include="ONNXModelRunner.cs" />
-        <Compile Include="onnx_model_direct_runner.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <EmbeddedResource Include="Form2.resx">
