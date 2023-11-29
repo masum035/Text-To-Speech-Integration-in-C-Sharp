@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Python.Runtime;
 
 namespace TTSIntegration
@@ -29,38 +30,43 @@ namespace TTSIntegration
             }
         }
         
-        public List<float[]> JustFetchAudioArray(ref dynamic pyModule, string inputText)
+        public async Task<List<float[]>> JustFetchAudioArray(DynamicWrapper pyModuleWrapper, string inputText)
         {
-            List<float[]> audioDataList = new List<float[]>();
-            try
+            return await Task.Run(() =>
             {
-                PythonEngine.Initialize();
-                using (Py.GIL())
+                List<float[]> audioDataList = new List<float[]>();
+                try
                 {
-                    var input = new PyString(inputText);
-                    
-                    dynamic result = pyModule.InvokeMethod("text_to_byte_array", new PyObject[] { input });
-
-                    dynamic pyList = result.tolist();
-
-                    int length = (int)pyList.Length();
-
-                    _csArray = new float[length];
-                    for (int i = 0; i < length; i++)
+                    PythonEngine.Initialize();
+                    using (Py.GIL())
                     {
-                        _csArray[i] = (float)pyList[i];
+                        var input = new PyString(inputText);
+
+                        dynamic result =
+                            pyModuleWrapper.Value.InvokeMethod("text_to_byte_array", new PyObject[] { input });
+
+                        dynamic pyList = result.tolist();
+
+                        int length = (int)pyList.Length();
+
+                        _csArray = new float[length];
+                        for (int i = 0; i < length; i++)
+                        {
+                            _csArray[i] = (float)pyList[i];
+                        }
+
+                        audioDataList.Add(_csArray);
                     }
 
-                    audioDataList.Add(_csArray);
+                    PythonEngine.Shutdown();
                 }
-                PythonEngine.Shutdown();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return audioDataList;
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
 
+                return audioDataList;
+            });
         }
     }
 }
